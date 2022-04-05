@@ -1,0 +1,241 @@
+<head>
+    <title>Notatnik</title>
+    <link rel="icon" type="image/svg" href="https://twemoji.maxcdn.com/v/14.0.0/72x72/1f4dc.png">
+    <style>
+        body {
+            color: whitesmoke;
+            background-color: #303030;
+        }
+
+        #notebody {
+            /*border: 1px dotted orange;*/
+            background-color: DarkGrey;
+            color: black;
+            margin-bottom: 10px;
+            padding: 5px;
+            min-height: 30vh;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            /* Since CSS 2.1 */
+            white-space: -moz-pre-wrap;
+            /* Mozilla, since 1999 */
+            white-space: -pre-wrap;
+            /* Opera 4-6 */
+            white-space: -o-pre-wrap;
+            /* Opera 7 */
+            word-wrap: break-word;
+            /* Internet Explorer 5.5+ */
+        }
+
+        #notebody::before {
+            content: "Enter your note here: \A";
+            font-family: 'Courier New', Courier, monospace;
+            font-size: small;
+            white-space: pre-wrap;
+        }
+
+        #btns_row1_right {
+            float: right;
+        }
+
+        #deletebutton {
+            font-weight: bold;
+            color: white;
+            background-color: red;
+        }
+
+        #footnote {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: black;
+            color: #4AF626;
+            height: 40px;
+            padding: 5px;
+            margin: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: small;
+        }
+
+        #noteslist {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: small;
+        }
+
+        #btns_row2 {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+
+        ol>li>span {
+            cursor: pointer;
+        }
+
+        @media print {
+            #notebody {
+                color: black;
+                background-color: white;
+            }
+
+            #notebody::before {
+                content: none;
+            }
+
+            #tools {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="notebody" contenteditable="true" spallcheck="true"></div>
+
+    <div id="tools">
+        <div>
+            <!--Button 1st row-->
+            <button onclick="saveNote()">Save→</button>
+            <input id="notename" placeholder="Enter note's name...">
+            <button onclick="loadNote()">←Load</button>
+            <button onclick="listNotes()">≣ List notes</button>
+
+            <span id="btns_row1_right">
+                <button onclick="window.print()">⎙ Print</button>
+                <button id="deletebutton" onclick="deleteNote()">⚠ Delete note</button>
+            </span>
+
+        </div>
+
+
+        <div id="btns_row2">
+            <!--Buttons 2nd row-->
+            <input id="link" type="url" placeholder="http://example.com" style="width:303px" />
+            <button onclick="addLink()">←Add Link</button>
+        </div>
+
+        <ol id="noteslist"></ol>
+
+        <!--Footnote & Info & Credits-->
+        <br /><br /><br />
+        <div id="footnote">
+            &gt; Paste images from clipboard using CTRL+V or ⊞+V.<br />
+            &gt; Hold CTRL when clicking link to open it.<br />
+            &gt; Select link's text and then Drag & Drop it to desired place.
+        </div>
+    </div>
+
+    <script>
+        //focus on notefield to start typing immeditaly
+        document.getElementById("notebody").focus();
+
+        function saveNote() {
+            var name = document.getElementById("notename").value;
+            if (localStorage.getItem(name) !== null) {
+                if (window.confirm("Note with that name already exist.\n⚠Do you want to overwrite it?")) {
+                    if (name != "") {
+                        var content = document.getElementById("notebody").innerHTML;
+                        localStorage.setItem(name, content);
+                        document.getElementById("noteslist").innerHTML = "Saved!";
+                    } else {
+                        window.alert("Note's name is empty");
+                    }
+                }
+            } else {
+                if (name != "") {
+                    var content = document.getElementById("notebody").innerHTML;
+                    localStorage.setItem(name, content);
+                    document.getElementById("noteslist").innerHTML = "Saved!";
+                } else {
+                    window.alert("Note's name is empty");
+                }
+            }
+        }
+
+        function loadNote() {
+            var name = document.getElementById("notename").value;
+            if (name != "") {
+                if (localStorage.getItem(name) == null) {
+                    window.alert("No note with given name was found");
+                } else {
+                    if (document.getElementById("notebody").innerHTML != "") {
+                        if (confirm("Do you want to load new note. All unsaved progress will be lost.")) {
+                            var content = localStorage.getItem(name);
+                            var destination = document.getElementById("notebody");
+                            destination.innerHTML = content;
+                        }
+                    } else {
+                        var content = localStorage.getItem(name);
+                        var destination = document.getElementById("notebody");
+                        destination.innerHTML = content;
+                    }
+
+                }
+            } else {
+                window.alert("Note's name is empty");
+            }
+        }
+
+        function deleteNote(name) {
+            if (name == null) {
+                name = document.getElementById("notename").value;
+            }
+            if (name != "") {
+                if (confirm("⚠ Do you really want to delete \"" + name + "\"?\n\nNote content: \"" + localStorage.getItem(name) + "\"")) {
+                    localStorage.removeItem(name);
+                }
+            } else {
+                window.alert("Note's name is empty");
+            }
+        }
+
+
+        function listNotes() {
+            document.getElementById("noteslist").innerHTML = "";
+            for (i = 0; i < localStorage.length; i++) {
+                key = localStorage.key(i);
+                var node = document.createElement('li');
+                //node.appendChild(document.createTextNode(key));
+                node.innerHTML = "<span onclick=\"setNamefieldValue('" + key + "')\">" + key + "</span>" + "<span onclick=\"deleteNote('" + key + "')\"> 🗑️ </span>";
+
+
+                document.querySelector('ol').appendChild(node);
+            }
+        }
+
+        function setNamefieldValue(newVal) {
+            document.getElementById("notename").value = newVal;
+        }
+
+        function addLink() {
+            var link = document.getElementById("link").value;
+            if (!(link.includes("http://") || link.includes("https://"))) {
+                link = "http://" + link;
+            }
+            link = "<a href=\"" + link + "\">[" + link + "]</a>";
+            var notebody = document.getElementById("notebody").innerHTML;
+            document.getElementById("notebody").innerHTML = notebody + "<br/>" + link;
+        }
+
+
+        ////Clicking links
+        document.addEventListener('keyup', disableLinkClick);
+        document.addEventListener('keydown', allowLinkClick);
+
+        function allowLinkClick(e) {
+            if (`${e.code}` == "ControlLeft") {
+                document.getElementById("notebody").contentEditable = false;
+            }
+            if (`${e.code}` == "AltRight") {
+                document.getElementById("notebody").contentEditable = true;
+                document.getElementById("notebody").focus();
+            }
+        }
+
+        function disableLinkClick(e) {
+            if (`${e.code}` == "ControlLeft") {
+                document.getElementById("notebody").contentEditable = true;
+                document.getElementById("notebody").focus();
+            }
+        }
+    </script>
+</body>
