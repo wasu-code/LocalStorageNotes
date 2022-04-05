@@ -102,22 +102,11 @@ function validURL(str) {
 
 
 ////Clicking links
-document.addEventListener('keyup', disableLinkClick);
-document.addEventListener('keydown', allowLinkClick);
-
-function allowLinkClick(e) {
-    if (`${e.code}` == "ControlLeft") {
+document.addEventListener('click', ctrlClick);
+function ctrlClick(e) {
+    if(`${e.ctrlKey}`==`true`) {
         document.getElementById("notebody").contentEditable = false;
-    }
-    if (`${e.code}` == "AltRight") {
-        document.getElementById("notebody").contentEditable = true;
-        document.getElementById("notebody").focus();
-    }
-}
-
-function disableLinkClick(e) {
-    if (`${e.code}` == "ControlLeft") {
-        document.getElementById("notebody").contentEditable = true;
-        document.getElementById("notebody").focus();
+        setTimeout(function(){document.getElementById("notebody").contentEditable = true;
+        document.getElementById("notebody").focus();},1);
     }
 }
