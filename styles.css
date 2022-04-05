@@ -1,0 +1,83 @@
+body {
+    color: whitesmoke;
+    background-color: #303030;
+}
+
+#notebody {
+    /*border: 1px dotted orange;*/
+    background-color: DarkGrey;
+    color: black;
+    margin-bottom: 10px;
+    padding: 5px;
+    min-height: 30vh;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -pre-wrap;
+    /* Opera 4-6 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* Internet Explorer 5.5+ */
+}
+
+#notebody::before {
+    content: "Enter your note here: \A";
+    font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+    white-space: pre-wrap;
+}
+
+#btns_row1_right {
+    float: right;
+}
+
+#deletebutton {
+    font-weight: bold;
+    color: white;
+    background-color: red;
+}
+
+#footnote {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    color: #4AF626;
+    height: 40px;
+    padding: 5px;
+    margin: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+}
+
+#noteslist {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+}
+
+#btns_row2 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+ol>li>span {
+    cursor: pointer;
+}
+
+@media print {
+    #notebody {
+        color: black;
+        background-color: white;
+    }
+
+    #notebody::before {
+        content: none;
+    }
+
+    #tools {
+        display: none;
+    }
+}
