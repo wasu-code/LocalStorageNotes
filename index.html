@@ -208,12 +208,23 @@
 
         function addLink() {
             var link = document.getElementById("link").value;
-            if (!(link.includes("http://") || link.includes("https://"))) {
-                link = "http://" + link;
+            if(validURL(link)) {
+               link = "<a href=\"" + link + "\">[" + link + "]</a>";
+                var notebody = document.getElementById("notebody").innerHTML;
+                document.getElementById("notebody").innerHTML = notebody + "<br/>" + link; 
+            } else {
+                window.alert("Incorrectly formatted URL.\n\nTip: Remember about http://");
             }
-            link = "<a href=\"" + link + "\">[" + link + "]</a>";
-            var notebody = document.getElementById("notebody").innerHTML;
-            document.getElementById("notebody").innerHTML = notebody + "<br/>" + link;
+        }
+
+        function validURL(str) {
+            var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return !!pattern.test(str);
         }
 
 
